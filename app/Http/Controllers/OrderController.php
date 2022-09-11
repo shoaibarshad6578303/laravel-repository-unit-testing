@@ -7,6 +7,8 @@ use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Interfaces\OrderRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+ 
 
 class OrderController extends Controller
 {
@@ -17,55 +19,63 @@ class OrderController extends Controller
         $this->orderRepository = $orderRepository;
     }
 
-    public function index(): JsonResponse 
+    public function index()
     {
-        return response()->json([
-            'data' => $this->orderRepository->getAllOrders()
-        ]);
+        $orders = $this->orderRepository->getAllOrders();
+        return view('orders.index', compact('orders'));
     }
 
-    public function store(Request $request): JsonResponse 
+    public function store(StoreOrderRequest $request) 
     {
-        $orderDetails = $request->only([
-            'client',
-            'details'
-        ]);
-
-        return response()->json(
-            [
-                'data' => $this->orderRepository->createOrder($orderDetails)
-            ],
-            Response::HTTP_CREATED
-        );
+        $created_order = $this->orderRepository->createOrder($request->validated());
+        return redirect()->back();
     }
 
-    public function show(Request $request): JsonResponse 
-    {
-        $orderId = $request->route('id');
+    // public function store(Request $request) 
+    // {
+    //     $data = $request->validate([
+    //         'client' => 'required',
+    //         'details' => 'required',
+    //     ]);
+        
+    //     $created_order = $this->orderRepository->createOrder($data);
+        
+    //     return redirect()->back();
+    // }
 
-        return response()->json([
-            'data' => $this->orderRepository->getOrderById($orderId)
-        ]);
+    public function show($id) 
+    {
+        $order = $this->orderRepository->getOrderById($id);
+        return view('orders.show', compact('order'));
     }
 
-    public function update(Request $request): JsonResponse 
+    public function edit($id) 
     {
-        $orderId = $request->route('id');
-        $orderDetails = $request->only([
-            'client',
-            'details'
-        ]);
+        $order = $this->orderRepository->getOrderById($id);
+        return view('orders.edit', compact('order'));
+    }
+    
+    public function update(UpdateOrderRequest $request, $id) 
+    {
+        $orderId = $id;
+        $this->orderRepository->updateOrder($id, $request->validated());
+        return redirect()->back();
 
-        return response()->json([
-            'data' => $this->orderRepository->updateOrder($orderId, $orderDetails)
-        ]);
+        // return response()->json([
+        //     'data' => $this->orderRepository->updateOrder($orderId, $orderDetails)
+        // ]);
     }
 
-    public function destroy(Request $request): JsonResponse 
+    public function destroy($id) 
     {
-        $orderId = $request->route('id');
-        $this->orderRepository->deleteOrder($orderId);
+        $this->orderRepository->deleteOrder($id);
 
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return redirect()->back();
     }
+
+    public function create()
+    {
+      return view("orders.create");
+    }
+
 }
