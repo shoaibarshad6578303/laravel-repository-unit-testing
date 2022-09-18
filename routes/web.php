@@ -24,3 +24,4 @@ Route::resource('orders', OrderController::class);
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/api-call', [App\Http\Controllers\ThirdApiCallController::class, 'index']);

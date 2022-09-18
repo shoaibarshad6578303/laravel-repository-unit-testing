@@ -24,3 +24,13 @@ Route::get('orders/{id}', [OrderController::class, 'show']);
 Route::post('orders', [OrderController::class, 'store']);
 Route::put('orders/{id}', [OrderController::class, 'update']);
 Route::delete('orders/{id}', [OrderController::class, 'delete']);
+
+Route::get('example', function(){
+     $data = [
+        'id' => 1,
+        'employee_name' => 'Tiger Nixon',
+        'employee_salary' => 320800,
+        'employee_age' => 61,
+     ];
+    return response()->json(['data' => $data],200);
+});

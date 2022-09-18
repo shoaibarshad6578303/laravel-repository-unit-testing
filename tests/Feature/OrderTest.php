@@ -55,7 +55,8 @@ class OrderTest extends TestCase
 
         $response->assertStatus(302);
         
-        $order = Order::where('client','Nadeem')->first();    
+        $order = Order::where('client','Nadeem')->first(); 
+          
         $this->assertNotNull($order);
 
         $response = $this->get('orders/'.$order->id);
@@ -107,16 +108,6 @@ class OrderTest extends TestCase
         ])->assertUnprocessable();   
         
         $response->assertJsonValidationErrors(['client']);
-    }
-
-    public function test_create_order()
-    {
-        $response = $this->json('post','orders', [
-            'client' => "Nadeem",
-            'details' => "Hi, I am nadeem"
-        ]);   
-        
-        $response->assertStatus(302);
     }
 
 }
