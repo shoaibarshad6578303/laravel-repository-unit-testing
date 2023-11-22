@@ -20,6 +20,8 @@ Route::get('/', function () {
 
 Route::resource('orders', OrderController::class);
 // Route::get('/home', [PhotoController::class, 'index'])->name('home');
+Route::post('temp', [OrderController::class, 'temp']);
+Route::get('one', [OrderController::class, 'one']);
 
 Auth::routes();
 

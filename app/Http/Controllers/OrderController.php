@@ -27,10 +27,23 @@ class OrderController extends Controller
 
     public function store(StoreOrderRequest $request) 
     {
-        $created_order = $this->orderRepository->createOrder($request->validated());
+        $data = $request->validate([
+                    'client' => 'required',
+                    'details' => 'required',
+                ]);
+        $created_order = $this->orderRepository->createOrder( $data);
+        return redirect()->back();
+    }
+    
+    public function temp(Request $request)
+    {
         return redirect()->back();
     }
 
+    public function one()
+    {
+        return response()->json([], 200);
+    }
     // public function store(Request $request) 
     // {
     //     $data = $request->validate([
@@ -58,7 +71,12 @@ class OrderController extends Controller
     public function update(UpdateOrderRequest $request, $id) 
     {
         $orderId = $id;
-        $this->orderRepository->updateOrder($id, $request->validated());
+        $data = $request->validate([
+            'client' => 'required',
+            'details' => 'required',
+        ]);
+        
+        $this->orderRepository->updateOrder($id, $data);
         return redirect()->back();
 
         // return response()->json([

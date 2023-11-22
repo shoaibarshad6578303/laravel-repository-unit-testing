@@ -1,14 +1,12 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Api;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Validation\Validator;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Order;
-
 
 class OrderTest extends TestCase
 {
@@ -18,10 +16,9 @@ class OrderTest extends TestCase
      *
      * @return void
      */
-    
-    public function test_temp()
+    public function test_createOrder()
     {
-        $response = $this->json('POST','temp', [
+        $response = $this->json('POST','/api/orders', [
             'client' => "Nadeem",
             'details' => "Hi, I am nadeem"
         ]); 
@@ -31,27 +28,25 @@ class OrderTest extends TestCase
     public function test_create_and_delete_order()
     {
         $user = User::factory()->create();
-       
-        $response = $this->actingAs($user)->json('POST','orders', [
+        $response = $this->actingAs($user)->json('POST','/api/orders', [
             'client' => "Nadeem",
             'details' => "Hi, I am nadeem"
         ]);   
-        
 
         $response->assertStatus(302);
         
-        $order = Order::where('client','Nadeem')->first();  
+        $order = Order::where('client','Nadeem')->first();    
         $this->assertNotNull($order);
 
-        $response = $this->get('orders/'.$order->id);
+        $response = $this->get('/api/orders/'.$order->id);
         
         $response->assertStatus(200); 
 
-        $response = $this->delete('orders/'.$order->id);
+        $response = $this->delete('/api/orders/'.$order->id);
         
         $response->assertStatus(302); 
 
-        $response = $this->get('orders/'.$order->id);
+        $response = $this->get('/api/orders/'.$order->id);
         
         $response->assertStatus(404); 
     }
@@ -59,7 +54,7 @@ class OrderTest extends TestCase
     public function test_create_and_update_order()
     {
         $user = User::factory()->create();
-        $response = $this->actingAs($user)->json('POST','orders', [
+        $response = $this->actingAs($user)->json('POST','/api/orders', [
             'client' => "Nadeem",
             'details' => "Hi, I am nadeem"
         ]);   
@@ -70,25 +65,24 @@ class OrderTest extends TestCase
           
         $this->assertNotNull($order);
 
-        $response = $this->get('orders/'.$order->id);
+        $response = $this->get('/api/orders/'.$order->id);
         
         $response->assertStatus(200); 
 
-        $response = $this->put('orders/'.$order->id, ['client' => "now", 'details' => "yes this is"]);
+        $response = $this->put('/api/orders/'.$order->id, ['client' => "now", 'details' => "yes this is"]);
         
         $response->assertStatus(302); 
-
     
         $update_order = Order::where('details', 'yes this is')->first();
         $this->assertNotNull($update_order);
 
-        $this->assertEquals($update_order["client"],"NOW");
+        $this->assertEquals($update_order['client'], "NOW");
         
     }
     
     public function test_create_order_detail_missing()
     {
-        $response = $this->json('POST','orders', [
+        $response = $this->json('POST','/api/orders', [
             'client' => "Nadeem",
         ])->assertUnprocessable();   
         
@@ -97,7 +91,7 @@ class OrderTest extends TestCase
 
     public function test_create_order_client_missing()
     {
-        $response = $this->json('POST','orders', [
+        $response = $this->json('POST','/api/orders', [
             'details' => "Hi, I am nadeem"
         ])->assertUnprocessable();   
         
@@ -106,7 +100,7 @@ class OrderTest extends TestCase
 
     public function test_update_order_detail_missing()
     {
-        $response = $this->json('put','orders/1', [
+        $response = $this->json('put','/api/orders/1', [
             'client' => "Nadeem",
         ])->assertUnprocessable();   
         
@@ -115,11 +109,10 @@ class OrderTest extends TestCase
 
     public function test_update_order_client_missing()
     {
-        $response = $this->json('put','orders/1', [
+        $response = $this->json('put','/api/orders/1', [
             'details' => "Hi, I am nadeem"
         ])->assertUnprocessable();   
         
         $response->assertJsonValidationErrors(['client']);
     }
-
 }

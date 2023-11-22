@@ -3,12 +3,10 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Interfaces\OrderRepositoryInterface;
-use App\Interfaces\Services\StudentServiceInterface;
-use App\Repositories\OrderRepository;
 use App\services\StudentService;
+use App\Interfaces\Services\StudentServiceInterface;
 
-class RepositoryServiceProvider extends ServiceProvider
+class ServiceClassProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -17,9 +15,7 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
         $this->app->bind(StudentServiceInterface::class, StudentService::class);
-
     }
 
     /**

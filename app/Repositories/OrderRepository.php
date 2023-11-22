@@ -19,7 +19,7 @@ class OrderRepository implements OrderRepositoryInterface
 
     public function deleteOrder($orderId) 
     {
-        Order::destroy($orderId);
+        return Order::destroy($orderId);
     }
 
     public function createOrder(array $orderDetails) 
