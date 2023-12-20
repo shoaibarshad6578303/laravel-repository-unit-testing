@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
+use Illuminate\Support\Facades\Cache;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +17,20 @@ use App\Http\Controllers\OrderController;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('set-cache', function () {
+    
+    $value = Cache::remember('key', 60, function () {
+        return 'This is the data to be cached.';
+    });
+    return $value;
+});
+
+Route::get('get-cache', function () {
+    // Cache::get
+    $value = Cache::get('key');
+    return $value;
 });
 
 Route::resource('orders', OrderController::class);
